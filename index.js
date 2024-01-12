@@ -1,7 +1,13 @@
-import React from 'react';
-import { createRoot } from 'react-dom/client';
-import App from './src/App';
+import React from "react";
+import ReactDOM from "react-dom/client"; // Updated import
+import { FluentProvider, teamsLightTheme } from "@fluentui/react-components";
 
-const container = document.getElementById('root');
-const root = createRoot(container);
-root.render(<App tab="home" />);
+import App from "./src/App";
+
+// Use createRoot to manage the root of your app
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(
+  <FluentProvider theme={teamsLightTheme}>
+    <App />
+  </FluentProvider>
+);
