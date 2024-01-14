@@ -4,6 +4,29 @@ import { makeStyles, Button, mergeClasses } from "@fluentui/react-components";
 import { shorthands } from "@fluentui/react-components";
 
 const useStyles = makeStyles({
+  quizContainer: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: "24px",
+    marginBottom: "24px",
+  },
+  imageProgressContainer: {
+    width: "624px",
+
+    "@media (max-width: 768px)": {
+      width: "100%", // Set width to 100% of the container
+    },
+  },
+  progressBarContainer: {
+    width: "100%",
+    height: "20px",
+  },
+  progressBar: {
+    height: "100%",
+    backgroundColor: "green",
+  },
   streakCounter: {
     marginTop: "12px",
     fontSize: "18px",
@@ -24,17 +47,24 @@ const useStyles = makeStyles({
     fontSize: "20px",
     display: "flex",
     flexDirection: "column",
-    alignItems: "center",
+    "@media (max-width: 768px)": {
+      alignItems: "center",
+    },
   },
   answersRow: {
     display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
+    "@media (max-width: 768px)": {
+      flexDirection: "column",
+
+      alignItems: "center",
+    },
   },
   questionAnswerContainer: {
     display: "flex",
     flexDirection: "column",
-    alignItems: "center",
+    "@media (max-width: 768px)": {
+      alignItems: "center",
+    },
   },
   responsiveImage: {
     width: "624px", // Default width for larger screens
@@ -64,6 +94,14 @@ const useStyles = makeStyles({
     ...shorthands.transition("border-color 0.5s ease"),
     transitionDuration: "0.5s",
   },
+  streakContainer: {
+    display: "flex",
+    flexDirection: "column",
+    width: "624px",
+    "@media (max-width: 768px)": {
+      width: "100%", // Set width to 100% of the container
+    },
+  },
 });
 
 const App = () => {
@@ -75,6 +113,44 @@ const App = () => {
   const [showAnimation, setShowAnimation] = useState(false);
   const [streakCounter, setStreakCounter] = useState(0);
   const [highestStreak, setHighestStreak] = useState(0);
+  const [progress, setProgress] = useState(1000);
+  const [progressColor, setProgressColor] = useState([0, 255, 0]);
+
+  const mix = (color1, color2, weight) => {
+    // Mix two colors together
+    const p = weight / 100;
+    const w = p * 2 - 1;
+    const w1 = (w / 1 + 1) / 2;
+    const w2 = 1 - w1;
+    const rgb = [
+      Math.round(color1[0] * w1 + color2[0] * w2),
+      Math.round(color1[1] * w1 + color2[1] * w2),
+      Math.round(color1[2] * w1 + color2[2] * w2),
+    ];
+    return rgb;
+  };
+
+  useEffect(() => {
+    // Start the progress bar when a new image is fetched
+    setProgress(1000);
+    setProgressColor([0, 255, 0]);
+    // Clean up the timer
+  }, [imageSrc]); // Depend on imageSrc so it resets on new image
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setProgress(progress - 1); // Set progress to 0 after 5 seconds
+      setProgressColor(mix([0, 255, 0], [255, 0, 0], progress / 10));
+    }, 5);
+
+    if (progress === 0) {
+      // Reset streak and fetch new image when progress bar completes
+      setStreakCounter(0);
+      fetchImage();
+      return () => clearTimeout(timer);
+    }
+    return () => clearTimeout(timer);
+  }, [progress]);
 
   const fetchImage = async () => {
     try {
@@ -130,11 +206,26 @@ const App = () => {
   };
 
   return (
-    <div>
-      <div>
-        {imageSrc && (
-          <img src={imageSrc} className={styles.responsiveImage} alt="Random" />
-        )}
+    <div className={styles.quizContainer}>
+      <div className={styles.imageProgressContainer}>
+        <div className={styles.progressBarContainer}>
+          <div
+            className={styles.progressBar}
+            style={{
+              width: `${progress / 10}%`,
+              backgroundColor: `rgb(${progressColor[0]}, ${progressColor[1]}, ${progressColor[2]})`,
+            }}
+          ></div>
+        </div>
+        <div>
+          {imageSrc && (
+            <img
+              src={imageSrc}
+              className={styles.responsiveImage}
+              alt="Random"
+            />
+          )}
+        </div>
       </div>
       <div className={styles.questionAnswerContainer}>
         <div className={styles.question}>
@@ -185,7 +276,7 @@ const App = () => {
           ))}
         </div>
       </div>
-      <div>
+      <div className={styles.streakContainer}>
         <div className={styles.streakCounter}>Streak: {streakCounter}</div>
         <div className={styles.streakCounter}>
           Highest Streak: {highestStreak}
