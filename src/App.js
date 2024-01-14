@@ -3,6 +3,12 @@ import axios from "axios";
 import { makeStyles, Button, mergeClasses } from "@fluentui/react-components";
 import { shorthands } from "@fluentui/react-components";
 
+import correctSound from "./assets/sounds/right-answer.mp3";
+import incorrectSound from "./assets/sounds/wrong-answer.mp3";
+
+const correctAudio = new Audio(correctSound);
+const incorrectAudio = new Audio(incorrectSound);
+
 const useStyles = makeStyles({
   quizContainer: {
     display: "flex",
@@ -192,8 +198,14 @@ const App = () => {
         setHighestStreak(streakCounter + 1); // Set new highest streak
       }
       setStreakCounter(streakCounter + 1); // Increment streak counter if correct
+      (() => {
+        new Audio(correctSound).play();
+      })();
     } else {
       setStreakCounter(0); // Reset streak counter if incorrect
+      (() => {
+        new Audio(incorrectSound).play();
+      })();
     }
 
     // Delay fetching new image/question
