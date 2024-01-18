@@ -6,10 +6,71 @@ import { shorthands } from "@fluentui/react-components";
 import correctSound from "./assets/sounds/right-answer.mp3";
 import incorrectSound from "./assets/sounds/wrong-answer.mp3";
 
+import aqua from "./assets/images/types/Aqua.png";
+import beast from "./assets/images/types/Beast.png";
+import beastwarrior from "./assets/images/types/BeastWarrior.png";
+import machine from "./assets/images/types/Machine.png";
+import pyro from "./assets/images/types/Pyro.png";
+import rock from "./assets/images/types/Rock.png";
+import spellcaster from "./assets/images/types/Spellcaster.png";
+import warrior from "./assets/images/types/Warrior.png";
+import wingedbeast from "./assets/images/types/WingedBeast.png";
+import zombie from "./assets/images/types/Zombie.png";
+import cyberse from "./assets/images/types/Cyberse.png";
+import dinosaur from "./assets/images/types/Dinosaur.png";
+import dragon from "./assets/images/types/Dragon.png";
+import fairy from "./assets/images/types/Fairy.png";
+import fiend from "./assets/images/types/Fiend.png";
+import fish from "./assets/images/types/Fish.png";
+import insect from "./assets/images/types/Insect.png";
+import plant from "./assets/images/types/Plant.png";
+import psychic from "./assets/images/types/Psychic.png";
+import reptile from "./assets/images/types/Reptile.png";
+import seaserpent from "./assets/images/types/SeaSerpent.png";
+import thunder from "./assets/images/types/Thunder.png";
+import wyrm from "./assets/images/types/Wyrm.png";
+import divinebeast from "./assets/images/types/DivineBeast.png";
+
+const icons = {
+  aqua,
+  beast,
+  beastwarrior,
+  machine,
+  pyro,
+  rock,
+  spellcaster,
+  warrior,
+  wingedbeast,
+  zombie,
+  cyberse,
+  dinosaur,
+  dragon,
+  fairy,
+  fiend,
+  fish,
+  insect,
+  plant,
+  psychic,
+  reptile,
+  seaserpent,
+  thunder,
+  wyrm,
+  divinebeast,
+};
+
 const correctAudio = new Audio(correctSound);
 const incorrectAudio = new Audio(incorrectSound);
 
 const useStyles = makeStyles({
+  buttonWithIcon: {
+    position: "relative",
+    display: "inline-block", // Adjust as needed
+  },
+  iconImage: {
+    position: "absolute",
+    top: "4px",
+    left: "4px",
+  },
   quizContainer: {
     display: "flex",
     flexDirection: "column",
@@ -40,7 +101,6 @@ const useStyles = makeStyles({
   },
   answerButton: {
     width: "300px",
-    marginRight: "24px",
     marginBottom: "12px",
 
     "@media (max-width: 768px)": {
@@ -59,6 +119,7 @@ const useStyles = makeStyles({
   },
   answersRow: {
     display: "flex",
+    justifyContent: "space-between",
     "@media (max-width: 768px)": {
       flexDirection: "column",
 
@@ -68,8 +129,11 @@ const useStyles = makeStyles({
   questionAnswerContainer: {
     display: "flex",
     flexDirection: "column",
+    width: "624px",
+    justifyItems: "center",
     "@media (max-width: 768px)": {
       alignItems: "center",
+      width: "100%", // Set width to 100% of the container
     },
   },
   responsiveImage: {
@@ -121,6 +185,7 @@ const App = () => {
   const [highestStreak, setHighestStreak] = useState(0);
   const [progress, setProgress] = useState(1000);
   const [progressColor, setProgressColor] = useState([0, 255, 0]);
+  const [icon, setIcon] = useState(["", "", "", ""]);
 
   const mix = (color1, color2, weight) => {
     // Mix two colors together
@@ -142,6 +207,28 @@ const App = () => {
     setProgressColor([0, 255, 0]);
     // Clean up the timer
   }, [imageSrc]); // Depend on imageSrc so it resets on new image
+
+  useEffect(() => {
+    if (imageData.question == "What is the type of this monster?") {
+      const type = imageData.race.toLowerCase();
+      const index = imageData.choices.indexOf(imageData.race);
+      const selectedIcon = ["", "", "", ""];
+      selectedIcon[index] = icons[type.replace(" ", "").replace("-", "")];
+      for (let i = 0; i < 4; i++) {
+        if (i != index) {
+          selectedIcon[i] =
+            icons[
+              imageData.choices[i]
+                .replace(" ", "")
+                .replace("-", "")
+                .toLowerCase()
+            ];
+        }
+      }
+      console.log(imageData.choices);
+      setIcon(selectedIcon);
+    }
+  }, [imageData]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -245,46 +332,66 @@ const App = () => {
         </div>
         <div className={styles.answersRow}>
           {imageData.choices.slice(0, 2).map((choice, index) => (
-            <Button
-              key={index}
-              disabled={showAnimation}
-              className={mergeClasses(
-                styles.answerButton,
-                showAnimation && selectedAnswer === choice
-                  ? choice === imageData.correct_choice
-                    ? styles.correctAnswer
-                    : styles.incorrectAnswer
-                  : "",
-                showAnimation && choice === imageData.correct_choice
-                  ? styles.correctAnswer
-                  : ""
+            <div className={styles.buttonWithIcon}>
+              {imageData.question == "What is the type of this monster?" && (
+                <img
+                  className={styles.iconImage}
+                  width="24px"
+                  height="24px"
+                  src={icon[index]}
+                />
               )}
-              onClick={() => pickAnswer(choice)}
-            >
-              {choice}
-            </Button>
+              <Button
+                key={index}
+                disabled={showAnimation}
+                className={mergeClasses(
+                  styles.answerButton,
+                  showAnimation && selectedAnswer === choice
+                    ? choice === imageData.correct_choice
+                      ? styles.correctAnswer
+                      : styles.incorrectAnswer
+                    : "",
+                  showAnimation && choice === imageData.correct_choice
+                    ? styles.correctAnswer
+                    : ""
+                )}
+                onClick={() => pickAnswer(choice)}
+              >
+                {choice}
+              </Button>
+            </div>
           ))}
         </div>
         <div className={styles.answersRow}>
           {imageData.choices.slice(2, 4).map((choice, index) => (
-            <Button
-              key={index}
-              disabled={showAnimation}
-              className={mergeClasses(
-                styles.answerButton,
-                showAnimation && selectedAnswer === choice
-                  ? choice === imageData.correct_choice
-                    ? styles.correctAnswer
-                    : styles.incorrectAnswer
-                  : "",
-                showAnimation && choice === imageData.correct_choice
-                  ? styles.correctAnswer
-                  : ""
+            <div className={styles.buttonWithIcon}>
+              {imageData.question == "What is the type of this monster?" && (
+                <img
+                  className={styles.iconImage}
+                  width="24px"
+                  height="24px"
+                  src={icon[index + 2]}
+                />
               )}
-              onClick={() => pickAnswer(choice)}
-            >
-              {choice}
-            </Button>
+              <Button
+                key={index}
+                disabled={showAnimation}
+                className={mergeClasses(
+                  styles.answerButton,
+                  showAnimation && selectedAnswer === choice
+                    ? choice === imageData.correct_choice
+                      ? styles.correctAnswer
+                      : styles.incorrectAnswer
+                    : "",
+                  showAnimation && choice === imageData.correct_choice
+                    ? styles.correctAnswer
+                    : ""
+                )}
+                onClick={() => pickAnswer(choice)}
+              >
+                {choice}
+              </Button>
+            </div>
           ))}
         </div>
       </div>
@@ -296,6 +403,7 @@ const App = () => {
       </div>
 
       <div>{correct}</div>
+      <img width="32px" height="32px" src={aqua} />
     </div>
   );
 };

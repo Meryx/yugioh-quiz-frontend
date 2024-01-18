@@ -98,6 +98,14 @@ module.exports = {
           outputPath: "assets/sounds/",
         },
       },
+      {
+        test: /\.png$/,
+        type: "asset/resource",
+        generator: {
+          publicPath: "assets/images/types/",
+          outputPath: "assets/images/types/",
+        },
+      },
     ],
   },
   plugins: [
