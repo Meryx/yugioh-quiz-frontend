@@ -31,6 +31,34 @@ import thunder from "./assets/images/types/Thunder.png";
 import wyrm from "./assets/images/types/Wyrm.png";
 import divinebeast from "./assets/images/types/DivineBeast.png";
 
+import dark from "./assets/images/attributes/DARK.svg";
+import divine from "./assets/images/attributes/DIVINE.svg";
+import earth from "./assets/images/attributes/EARTH.svg";
+import fire from "./assets/images/attributes/FIRE.svg";
+import light from "./assets/images/attributes/LIGHT.svg";
+import water from "./assets/images/attributes/WATER.svg";
+import wind from "./assets/images/attributes/WIND.svg";
+
+import continuousspell from "./assets/images/st/Continuous.svg";
+import continuoustrap from "./assets/images/st/Continuous.svg";
+import countertrap from "./assets/images/st/Counter.svg";
+import equip from "./assets/images/st/Equip.svg";
+import field from "./assets/images/st/Field.svg";
+import quickplay from "./assets/images/st/Quick-Play.svg";
+import ritual from "./assets/images/st/Ritual.svg";
+
+import level from "./assets/images/Level.png";
+
+const st = {
+  continuousspell,
+  continuoustrap,
+  countertrap,
+  equip,
+  field,
+  quickplay,
+  ritual,
+};
+
 const icons = {
   aqua,
   beast,
@@ -58,6 +86,16 @@ const icons = {
   divinebeast,
 };
 
+const attributes = {
+  dark,
+  divine,
+  earth,
+  fire,
+  light,
+  water,
+  wind,
+};
+
 const correctAudio = new Audio(correctSound);
 const incorrectAudio = new Audio(incorrectSound);
 
@@ -70,6 +108,78 @@ const useStyles = makeStyles({
     position: "absolute",
     top: "4px",
     left: "4px",
+  },
+  iconImage1: {
+    position: "absolute",
+    top: "4px",
+    left: "4px",
+    zIndex: "2",
+  },
+  iconImage2: {
+    position: "absolute",
+    top: "4px",
+    left: "14px",
+    zIndex: "3",
+  },
+  iconImage3: {
+    position: "absolute",
+    top: "4px",
+    left: "24px",
+    zIndex: "4",
+  },
+  iconImage4: {
+    position: "absolute",
+    top: "4px",
+    left: "34px",
+    zIndex: "5",
+  },
+  iconImage5: {
+    position: "absolute",
+    top: "4px",
+    left: "44px",
+    zIndex: "6",
+  },
+  iconImage6: {
+    position: "absolute",
+    top: "4px",
+    left: "54px",
+    zIndex: "7",
+  },
+  iconImage7: {
+    position: "absolute",
+    top: "4px",
+    left: "64px",
+    zIndex: "8",
+  },
+  iconImage8: {
+    position: "absolute",
+    top: "4px",
+    left: "74px",
+    zIndex: "9",
+  },
+  iconImage9: {
+    position: "absolute",
+    top: "4px",
+    left: "84px",
+    zIndex: "10",
+  },
+  iconImage10: {
+    position: "absolute",
+    top: "4px",
+    left: "94px",
+    zIndex: "11",
+  },
+  iconImage11: {
+    position: "absolute",
+    top: "4px",
+    left: "104px",
+    zIndex: "12",
+  },
+  iconImage12: {
+    position: "absolute",
+    top: "4px",
+    left: "114px",
+    zIndex: "13",
   },
   quizContainer: {
     display: "flex",
@@ -89,6 +199,7 @@ const useStyles = makeStyles({
   progressBarContainer: {
     width: "100%",
     height: "20px",
+    backgroundColor: "black",
   },
   progressBar: {
     height: "100%",
@@ -186,6 +297,10 @@ const App = () => {
   const [progress, setProgress] = useState(1000);
   const [progressColor, setProgressColor] = useState([0, 255, 0]);
   const [icon, setIcon] = useState(["", "", "", ""]);
+  const [attributeIcon, setAttributeIcon] = useState(["", "", "", ""]);
+  const [isAttribute, setIsAttribute] = useState(false);
+  const [isType, setIsType] = useState(false);
+  const [isLevel, setIsLevel] = useState(false);
 
   const mix = (color1, color2, weight) => {
     // Mix two colors together
@@ -225,8 +340,64 @@ const App = () => {
             ];
         }
       }
-      console.log(imageData.choices);
       setIcon(selectedIcon);
+    }
+    if (imageData.question == "What is the attribute of this monster?") {
+      const attribute = imageData.correct_choice.toLowerCase();
+      const index = imageData.choices.indexOf(imageData.correct_choice);
+      const selectedIcon = ["", "", "", ""];
+      selectedIcon[index] = attributes[attribute];
+      for (let i = 0; i < 4; i++) {
+        if (i != index) {
+          selectedIcon[i] =
+            attributes[imageData.choices[i].replace(" ", "").toLowerCase()];
+        }
+      }
+      setAttributeIcon(selectedIcon);
+      setIsAttribute(true);
+    } else {
+      setIsAttribute(false);
+    }
+
+    if (imageData.question == "What is the type of this card?") {
+      const type = imageData.correct_choice
+        .toLowerCase()
+        .replace(" ", "")
+        .replace("-", "");
+      const index = imageData.choices.indexOf(imageData.correct_choice);
+      const selectedIcon = ["", "", "", ""];
+      selectedIcon[index] = st[type];
+      for (let i = 0; i < 4; i++) {
+        if (i != index) {
+          selectedIcon[i] =
+            st[
+              imageData.choices[i]
+                .toLowerCase()
+                .replace(" ", "")
+                .replace("-", "")
+            ];
+        }
+      }
+      setIcon(selectedIcon);
+      setIsType(true);
+    } else {
+      setIsType(false);
+    }
+
+    if (imageData.question == "What is the level of this monster?") {
+      const levelno = parseInt(imageData.correct_choice);
+      const index = imageData.choices.indexOf(imageData.correct_choice);
+      const selectedIcon = [1, 1, 1, 1];
+      selectedIcon[index] = levelno;
+      for (let i = 0; i < 4; i++) {
+        if (i != index) {
+          selectedIcon[i] = imageData.choices[i];
+        }
+      }
+      setIcon(selectedIcon);
+      setIsLevel(true);
+    } else {
+      setIsLevel(false);
     }
   }, [imageData]);
 
@@ -341,6 +512,37 @@ const App = () => {
                   src={icon[index]}
                 />
               )}
+
+              {isLevel &&
+                Array.from({ length: imageData.choices[index] }).map((_, i) => (
+                  <img
+                    className={styles[`iconImage${i + 1}`]}
+                    width="24px"
+                    height="24px"
+                    src={level}
+                  />
+                ))}
+
+              {isType &&
+                imageData.choices[index] != "Normal Spell" &&
+                imageData.choices[index] != "Normal Trap" && (
+                  <img
+                    className={styles.iconImage}
+                    width="24px"
+                    height="24px"
+                    src={icon[index]}
+                  />
+                )}
+
+              {isAttribute && (
+                <img
+                  className={styles.iconImage}
+                  width="24px"
+                  height="24px"
+                  src={attributeIcon[index]}
+                />
+              )}
+
               <Button
                 key={index}
                 disabled={showAnimation}
@@ -373,6 +575,39 @@ const App = () => {
                   src={icon[index + 2]}
                 />
               )}
+
+              {isLevel &&
+                Array.from({ length: imageData.choices[index + 2] }).map(
+                  (_, i) => (
+                    <img
+                      className={styles[`iconImage${i + 1}`]}
+                      width="24px"
+                      height="24px"
+                      src={level}
+                    />
+                  )
+                )}
+
+              {isType &&
+                imageData.choices[index + 2] != "Normal Spell" &&
+                imageData.choices[index + 2] != "Normal Trap" && (
+                  <img
+                    className={styles.iconImage}
+                    width="24px"
+                    height="24px"
+                    src={icon[index + 2]}
+                  />
+                )}
+
+              {isAttribute && (
+                <img
+                  className={styles.iconImage}
+                  width="24px"
+                  height="24px"
+                  src={attributeIcon[index + 2]}
+                />
+              )}
+
               <Button
                 key={index}
                 disabled={showAnimation}
@@ -403,7 +638,6 @@ const App = () => {
       </div>
 
       <div>{correct}</div>
-      <img width="32px" height="32px" src={aqua} />
     </div>
   );
 };

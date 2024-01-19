@@ -106,6 +106,30 @@ module.exports = {
           outputPath: "assets/images/types/",
         },
       },
+      {
+        test: /\.svg$/,
+        type: "asset/resource",
+        generator: {
+          publicPath: "assets/images/attributes/",
+          outputPath: "assets/images/attributes/",
+        },
+      },
+      {
+        test: /\.svg$/,
+        type: "asset/resource",
+        generator: {
+          publicPath: "assets/images/st/",
+          outputPath: "assets/images/st/",
+        },
+      },
+      {
+        test: /\.png$/,
+        type: "asset/resource",
+        generator: {
+          publicPath: "assets/images/",
+          outputPath: "assets/images/",
+        },
+      },
     ],
   },
   plugins: [
