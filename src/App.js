@@ -41,7 +41,7 @@ import wind from "./assets/images/attributes/WIND.svg";
 
 import continuousspell from "./assets/images/st/Continuous.svg";
 import continuoustrap from "./assets/images/st/Continuous.svg";
-import countertrap from "./assets/images/st/Counter.svg";
+import counter from "./assets/images/st/Counter.svg";
 import equip from "./assets/images/st/Equip.svg";
 import field from "./assets/images/st/Field.svg";
 import quickplay from "./assets/images/st/Quick-Play.svg";
@@ -52,7 +52,7 @@ import level from "./assets/images/Level.png";
 const st = {
   continuousspell,
   continuoustrap,
-  countertrap,
+  counter,
   equip,
   field,
   quickplay,
@@ -100,6 +100,10 @@ const correctAudio = new Audio(correctSound);
 const incorrectAudio = new Audio(incorrectSound);
 
 const useStyles = makeStyles({
+  timer: {
+    marginRight: "12px",
+    fontWeight: "bold",
+  },
   buttonWithIcon: {
     position: "relative",
     display: "inline-block", // Adjust as needed
@@ -199,7 +203,13 @@ const useStyles = makeStyles({
   progressBarContainer: {
     width: "100%",
     height: "20px",
-    backgroundColor: "black",
+    display: "flex",
+    marginBottom: "12px",
+  },
+
+  progressBarInnerContainer: {
+    display: "flex",
+    width: "100%",
   },
   progressBar: {
     height: "100%",
@@ -320,6 +330,21 @@ const App = () => {
     // Start the progress bar when a new image is fetched
     setProgress(1000);
     setProgressColor([0, 255, 0]);
+    if (imageData.question == "What is the DEF of this monster?") {
+      setImageData({
+        ...imageData,
+        correct_choice: `DEF ${imageData.correct_choice}`,
+        choices: imageData.choices.map((x) => `DEF ${x}`),
+      });
+    }
+
+    if (imageData.question == "What is the ATK of this monster?") {
+      setImageData({
+        ...imageData,
+        correct_choice: `ATK ${imageData.correct_choice}`,
+        choices: imageData.choices.map((x) => `ATK ${x}`),
+      });
+    }
     // Clean up the timer
   }, [imageSrc]); // Depend on imageSrc so it resets on new image
 
@@ -479,13 +504,16 @@ const App = () => {
     <div className={styles.quizContainer}>
       <div className={styles.imageProgressContainer}>
         <div className={styles.progressBarContainer}>
-          <div
-            className={styles.progressBar}
-            style={{
-              width: `${progress / 10}%`,
-              backgroundColor: `rgb(${progressColor[0]}, ${progressColor[1]}, ${progressColor[2]})`,
-            }}
-          ></div>
+          <div className={styles.timer}>Timer</div>
+          <div className={styles.progressBarInnerContainer}>
+            <div
+              className={styles.progressBar}
+              style={{
+                width: `${progress / 10}%`,
+                backgroundColor: `rgb(${progressColor[0]}, ${progressColor[1]}, ${progressColor[2]})`,
+              }}
+            ></div>
+          </div>
         </div>
         <div>
           {imageSrc && (
@@ -636,8 +664,6 @@ const App = () => {
           Highest Streak: {highestStreak}
         </div>
       </div>
-
-      <div>{correct}</div>
     </div>
   );
 };
