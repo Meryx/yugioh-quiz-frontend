@@ -96,9 +96,6 @@ const attributes = {
   wind,
 };
 
-const correctAudio = new Audio(correctSound);
-const incorrectAudio = new Audio(incorrectSound);
-
 const useStyles = makeStyles({
   timer: {
     marginRight: "12px",
@@ -299,7 +296,6 @@ const App = () => {
   const styles = useStyles();
   const [imageSrc, setImageSrc] = useState("");
   const [imageData, setImageData] = useState({ choices: [] });
-  const [correct, setCorrect] = useState("");
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [showAnimation, setShowAnimation] = useState(false);
   const [streakCounter, setStreakCounter] = useState(0);
@@ -330,53 +326,26 @@ const App = () => {
     // Start the progress bar when a new image is fetched
     setProgress(1000);
     setProgressColor([0, 255, 0]);
-    if (imageData.question == "What is the DEF of this monster?") {
-      setImageData({
-        ...imageData,
-        correct_choice: `DEF ${imageData.correct_choice}`,
-        choices: imageData.choices.map((x) => `DEF ${x}`),
-      });
-    }
 
-    if (imageData.question == "What is the ATK of this monster?") {
-      setImageData({
-        ...imageData,
-        correct_choice: `ATK ${imageData.correct_choice}`,
-        choices: imageData.choices.map((x) => `ATK ${x}`),
-      });
-    }
     // Clean up the timer
   }, [imageSrc]); // Depend on imageSrc so it resets on new image
 
   useEffect(() => {
     if (imageData.question == "What is the type of this monster?") {
-      const type = imageData.race.toLowerCase();
-      const index = imageData.choices.indexOf(imageData.race);
       const selectedIcon = ["", "", "", ""];
-      selectedIcon[index] = icons[type.replace(" ", "").replace("-", "")];
       for (let i = 0; i < 4; i++) {
-        if (i != index) {
-          selectedIcon[i] =
-            icons[
-              imageData.choices[i]
-                .replace(" ", "")
-                .replace("-", "")
-                .toLowerCase()
-            ];
-        }
+        selectedIcon[i] =
+          icons[
+            imageData.choices[i].replace(" ", "").replace("-", "").toLowerCase()
+          ];
       }
       setIcon(selectedIcon);
     }
     if (imageData.question == "What is the attribute of this monster?") {
-      const attribute = imageData.correct_choice.toLowerCase();
-      const index = imageData.choices.indexOf(imageData.correct_choice);
       const selectedIcon = ["", "", "", ""];
-      selectedIcon[index] = attributes[attribute];
       for (let i = 0; i < 4; i++) {
-        if (i != index) {
-          selectedIcon[i] =
-            attributes[imageData.choices[i].replace(" ", "").toLowerCase()];
-        }
+        selectedIcon[i] =
+          attributes[imageData.choices[i].replace(" ", "").toLowerCase()];
       }
       setAttributeIcon(selectedIcon);
       setIsAttribute(true);
@@ -385,23 +354,12 @@ const App = () => {
     }
 
     if (imageData.question == "What is the type of this card?") {
-      const type = imageData.correct_choice
-        .toLowerCase()
-        .replace(" ", "")
-        .replace("-", "");
-      const index = imageData.choices.indexOf(imageData.correct_choice);
       const selectedIcon = ["", "", "", ""];
-      selectedIcon[index] = st[type];
       for (let i = 0; i < 4; i++) {
-        if (i != index) {
-          selectedIcon[i] =
-            st[
-              imageData.choices[i]
-                .toLowerCase()
-                .replace(" ", "")
-                .replace("-", "")
-            ];
-        }
+        selectedIcon[i] =
+          st[
+            imageData.choices[i].toLowerCase().replace(" ", "").replace("-", "")
+          ];
       }
       setIcon(selectedIcon);
       setIsType(true);
@@ -410,14 +368,9 @@ const App = () => {
     }
 
     if (imageData.question == "What is the level of this monster?") {
-      const levelno = parseInt(imageData.correct_choice);
-      const index = imageData.choices.indexOf(imageData.correct_choice);
       const selectedIcon = [1, 1, 1, 1];
-      selectedIcon[index] = levelno;
       for (let i = 0; i < 4; i++) {
-        if (i != index) {
-          selectedIcon[i] = imageData.choices[i];
-        }
+        selectedIcon[i] = imageData.choices[i];
       }
       setIcon(selectedIcon);
       setIsLevel(true);
@@ -474,7 +427,6 @@ const App = () => {
   const pickAnswer = (answer) => {
     setSelectedAnswer(answer); // Set the selected answer
     setShowAnimation(true); // Start the animation
-    setCorrect(answer === imageData.correct_choice ? "Correct!" : "Incorrect!");
 
     if (answer === imageData.correct_choice) {
       if (streakCounter + 1 > highestStreak) {
@@ -496,7 +448,6 @@ const App = () => {
       fetchImage();
       setShowAnimation(false); // Reset animation state
       setSelectedAnswer(null); // Reset selected answer
-      setCorrect(""); // Reset correct state
     }, 1000); // Delay in milliseconds
   };
 
