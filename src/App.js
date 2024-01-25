@@ -97,6 +97,12 @@ const attributes = {
 };
 
 const useStyles = makeStyles({
+  levelContainer: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+  },
+
   timer: {
     marginRight: "12px",
     fontWeight: "bold",
@@ -109,78 +115,8 @@ const useStyles = makeStyles({
     position: "absolute",
     top: "4px",
     left: "4px",
-  },
-  iconImage1: {
-    position: "absolute",
-    top: "4px",
-    left: "4px",
-    zIndex: "2",
-  },
-  iconImage2: {
-    position: "absolute",
-    top: "4px",
-    left: "14px",
-    zIndex: "3",
-  },
-  iconImage3: {
-    position: "absolute",
-    top: "4px",
-    left: "24px",
-    zIndex: "4",
-  },
-  iconImage4: {
-    position: "absolute",
-    top: "4px",
-    left: "34px",
-    zIndex: "5",
-  },
-  iconImage5: {
-    position: "absolute",
-    top: "4px",
-    left: "44px",
-    zIndex: "6",
-  },
-  iconImage6: {
-    position: "absolute",
-    top: "4px",
-    left: "54px",
-    zIndex: "7",
-  },
-  iconImage7: {
-    position: "absolute",
-    top: "4px",
-    left: "64px",
-    zIndex: "8",
-  },
-  iconImage8: {
-    position: "absolute",
-    top: "4px",
-    left: "74px",
-    zIndex: "9",
-  },
-  iconImage9: {
-    position: "absolute",
-    top: "4px",
-    left: "84px",
-    zIndex: "10",
-  },
-  iconImage10: {
-    position: "absolute",
-    top: "4px",
-    left: "94px",
-    zIndex: "11",
-  },
-  iconImage11: {
-    position: "absolute",
-    top: "4px",
-    left: "104px",
-    zIndex: "12",
-  },
-  iconImage12: {
-    position: "absolute",
-    top: "4px",
-    left: "114px",
-    zIndex: "13",
+    width: "64px",
+    height: "64px",
   },
   quizContainer: {
     display: "flex",
@@ -189,6 +125,8 @@ const useStyles = makeStyles({
     justifyContent: "center",
     marginTop: "24px",
     marginBottom: "24px",
+    backgroundColor: "#2e3047",
+    color: "white",
   },
   imageProgressContainer: {
     width: "624px",
@@ -220,10 +158,14 @@ const useStyles = makeStyles({
   answerButton: {
     width: "300px",
     marginBottom: "12px",
+    height: "70px",
 
     "@media (max-width: 768px)": {
       marginRight: "0px",
     },
+  },
+  answerButtonLevel: {
+    height: "70px",
   },
   question: {
     marginBottom: "12px",
@@ -249,6 +191,7 @@ const useStyles = makeStyles({
     flexDirection: "column",
     width: "624px",
     justifyItems: "center",
+    marginTop: "12px",
     "@media (max-width: 768px)": {
       alignItems: "center",
       width: "100%", // Set width to 100% of the container
@@ -284,8 +227,9 @@ const useStyles = makeStyles({
   },
   streakContainer: {
     display: "flex",
-    flexDirection: "column",
+    flexDirection: "row",
     width: "624px",
+    justifyContent: "space-between",
     "@media (max-width: 768px)": {
       width: "100%", // Set width to 100% of the container
     },
@@ -382,7 +326,7 @@ const App = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setProgress(progress - 1); // Set progress to 0 after 5 seconds
-      setProgressColor(mix([0, 255, 0], [255, 0, 0], progress / 10));
+      setProgressColor(mix([59, 186, 156], [59, 186, 156], progress / 10));
     }, 5);
 
     if (progress === 0) {
@@ -398,17 +342,16 @@ const App = () => {
     try {
       // First request to get the image key
       const response = await axios.get(
-        "http://localhost:8000/random-image-info"
+        "http://16.171.250.225/random-image-info"
       );
       const name = response.data.name;
       const key = name.split(".")[0];
 
       setImageData(response.data);
-      console.log("Image data:", response.data);
 
       // Second request to fetch the image using the key
       const imageResponse = await axios.get(
-        `http://localhost:8000/fetch-image?name=${key}`,
+        `http://16.171.250.225/fetch-image?name=${key}`,
         { responseType: "blob" }
       );
 
@@ -477,30 +420,34 @@ const App = () => {
         </div>
       </div>
       <div className={styles.questionAnswerContainer}>
-        <div className={styles.question}>
-          <b>{imageData.question}</b>
-        </div>
         <div className={styles.answersRow}>
           {imageData.choices.slice(0, 2).map((choice, index) => (
             <div className={styles.buttonWithIcon}>
               {imageData.question == "What is the type of this monster?" && (
-                <img
-                  className={styles.iconImage}
-                  width="24px"
-                  height="24px"
-                  src={icon[index]}
-                />
+                <img className={styles.iconImage} src={icon[index]} />
               )}
 
-              {isLevel &&
-                Array.from({ length: imageData.choices[index] }).map((_, i) => (
-                  <img
-                    className={styles[`iconImage${i + 1}`]}
-                    width="24px"
-                    height="24px"
-                    src={level}
-                  />
-                ))}
+              {isLevel && (
+                <div className={styles.levelContainer}>
+                  {Array.from({ length: imageData.choices[index] }).map(
+                    (_, i) => (
+                      <img
+                        style={{
+                          position: "absolute",
+                          top: "4px",
+                          left: `${
+                            -((imageData.choices[index] * 20) / 2) + i * 20
+                          }px`,
+                        }}
+                        width="20px"
+                        height="20px"
+                        src={level}
+                        key={i} // added key for list items in React
+                      />
+                    )
+                  )}
+                </div>
+              )}
 
               {isType &&
                 imageData.choices[index] != "Normal Spell" &&
@@ -534,7 +481,8 @@ const App = () => {
                     : "",
                   showAnimation && choice === imageData.correct_choice
                     ? styles.correctAnswer
-                    : ""
+                    : "",
+                  isLevel && styles.answerButtonLevel
                 )}
                 onClick={() => pickAnswer(choice)}
               >
@@ -555,17 +503,27 @@ const App = () => {
                 />
               )}
 
-              {isLevel &&
-                Array.from({ length: imageData.choices[index + 2] }).map(
-                  (_, i) => (
-                    <img
-                      className={styles[`iconImage${i + 1}`]}
-                      width="24px"
-                      height="24px"
-                      src={level}
-                    />
-                  )
-                )}
+              {isLevel && (
+                <div className={styles.levelContainer}>
+                  {Array.from({ length: imageData.choices[index + 2] }).map(
+                    (_, i) => (
+                      <img
+                        style={{
+                          position: "absolute",
+                          top: "4px",
+                          left: `${
+                            -((imageData.choices[index + 2] * 20) / 2) + i * 20
+                          }px`,
+                        }}
+                        width="20px"
+                        height="20px"
+                        src={level}
+                        key={i} // added key for list items in React
+                      />
+                    )
+                  )}
+                </div>
+              )}
 
               {isType &&
                 imageData.choices[index + 2] != "Normal Spell" &&
@@ -599,7 +557,8 @@ const App = () => {
                     : "",
                   showAnimation && choice === imageData.correct_choice
                     ? styles.correctAnswer
-                    : ""
+                    : "",
+                  isLevel && styles.answerButtonLevel
                 )}
                 onClick={() => pickAnswer(choice)}
               >
