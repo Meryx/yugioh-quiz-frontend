@@ -328,20 +328,20 @@ const App = () => {
     }
   }, [imageData]);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setProgress(progress - 1); // Set progress to 0 after 5 seconds
-      setProgressColor(mix([59, 186, 156], [59, 186, 156], progress / 10));
-    }, 5);
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     setProgress(progress - 1); // Set progress to 0 after 5 seconds
+  //     setProgressColor(mix([59, 186, 156], [59, 186, 156], progress / 10));
+  //   }, 5);
 
-    if (progress === 0) {
-      // Reset streak and fetch new image when progress bar completes
-      setStreakCounter(0);
-      fetchImage();
-      return () => clearTimeout(timer);
-    }
-    return () => clearTimeout(timer);
-  }, [progress]);
+  //   if (progress === 0) {
+  //     // Reset streak and fetch new image when progress bar completes
+  //     setStreakCounter(0);
+  //     fetchImage();
+  //     return () => clearTimeout(timer);
+  //   }
+  //   return () => clearTimeout(timer);
+  // }, [progress]);
 
   const fetchImage = async () => {
     try {
@@ -402,7 +402,7 @@ const App = () => {
   return (
     <div className={styles.quizContainer}>
       <div className={styles.imageProgressContainer}>
-        <div className={styles.progressBarContainer}>
+        {/* <div className={styles.progressBarContainer}>
           <div className={styles.timer}>Timer</div>
           <div className={styles.progressBarInnerContainer}>
             <div
@@ -413,7 +413,7 @@ const App = () => {
               }}
             ></div>
           </div>
-        </div>
+        </div> */}
         <div className={styles.imageContainer}>
           {imageSrc && (
             <img
