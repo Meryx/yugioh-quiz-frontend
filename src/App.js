@@ -342,7 +342,7 @@ const App = () => {
     try {
       // First request to get the image key
       const response = await axios.get(
-        "https://13.50.197.28/random-image-info"
+        "https://ygoquizapi.com/random-image-info"
       );
       const name = response.data.name;
       const key = name.split(".")[0];
@@ -351,7 +351,7 @@ const App = () => {
 
       // Second request to fetch the image using the key
       const imageResponse = await axios.get(
-        `https://13.50.197.28/fetch-image?name=${key}`,
+        `https://ygoquizapi.com/fetch-image?name=${key}`,
         { responseType: "blob" }
       );
 
