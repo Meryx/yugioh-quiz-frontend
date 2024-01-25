@@ -197,13 +197,18 @@ const useStyles = makeStyles({
       width: "100%", // Set width to 100% of the container
     },
   },
+  imageContainer: {
+    display: "flex",
+    justifyContent: "center",
+  },
+
   responsiveImage: {
     width: "624px", // Default width for larger screens
     height: "624px", // Default height for larger screens
 
     // Media query for smaller screens (e.g., max-width of 768px)
     "@media (max-width: 768px)": {
-      width: "100%", // Set width to 100% of the container
+      width: "75%", // Set width to 100% of the container
       height: "auto", // Adjust height automatically to maintain aspect ratio
     },
   },
@@ -409,7 +414,7 @@ const App = () => {
             ></div>
           </div>
         </div>
-        <div>
+        <div className={styles.imageContainer}>
           {imageSrc && (
             <img
               src={imageSrc}
